@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="card-check-bg"></div>
+    <div class="start-background">Start</div>
+    <div class="control-wrapper">
+        <p class="subtract">-</p>
+        <span class="show-card-num">3</span>
+        <p class="increase">+</p>
+        <p class="start">Start</p>
+        <p class="reset">Reset</p>
+    </div>
+    <div class="cards-wrapper">
+        <div class="card"><span class="card-span">1</span></div>
+        <div class="card"><span class="card-span">1</span></div>
+        <div class="card"><span class="card-span">2</span></div>
+        <div class="card"><span class="card-span">2</span></div>
+        <div class="card"><span class="card-span">3</span></div>
+        <div class="card"><span class="card-span">3</span></div>
+    </div>
+    <script>
+        // variable
+        const subtractBtn = document.querySelector('.subtract');
+        const increaseBtn = document.querySelector('.increase');
+        const startBtn = document.querySelector('.start');
+        const resetBtn = document.querySelector('.reset');
+        const controlWrapper = document.querySelector('.control-wrapper');
+        const cardWrapper = document.querySelector('.cards-wrapper');
+        const startBackground = document.querySelector('.start-background');
+        const show = document.querySelector('.show-card-num');
+
+        let showNum;
+        let cardWrapperFixed = cardWrapper.innerHTML;
+        let cardsNum = 3;
+        let activeCardNum = 0;
+        let activeCard;
+
+
+        // function
+        function addCard(el) {
+            if(el.target.className !== 'increase') return;
+            showCardNum(true);
+            const newCards = `
+                 <div class="card"><span class="card-span">${cardsNum}</span></div>
+                 <div class="card"><span class="card-span">${cardsNum}</span></div>
+            `;
+            cardWrapper.insertAdjacentHTML('beforeend', newCards);
+
+        }
+
+        function removeCard(el) {
+            if(el.target.className !== 'subtract' || cardsNum <= 2) return;
+            cardWrapperChildRemove(2)
+            showCardNum(false)
+        }
+
+        function cardWrapperChildRemove(num) {
+            for (let index = 0; index < num; index++) {
+             cardWrapper.lastElementChild.remove();
+            }
+        }
+
+        function showCardNum(control) {
+            control === true ? cardsNum++ : cardsNum--;
+            show.innerHTML = `${cardsNum}`;
+            return cardsNum; 
+        }
+
+        function gameActive(el) {
+            if(el.target.className !== 'start') return;
+            gameStatus(true);
+            let randomCard = [];
+            let cardWrapperArr = Array.prototype.slice.call(cardWrapper.querySelectorAll('.card'));
+            cardWrapper.querySelectorAll('.card').forEach((e, index) => {
+                e.querySelector('span').classList.add('notSee');
+                e.style.background = '#eee';
+
+                // 利用 random 排列 card
+                let indexC = Math.floor(Math.random() * cardWrapperArr.length)
+                randomCard.push(cardWrapperArr[indexC])
+                cardWrapperArr.splice(indexC, 1);
+            });
+            // cardWrapper.querySelector(':nth-child(indexC+1)')
+            cardWrapper.innerHTML = '';
+            randomCard.forEach(e =>{
+                cardWrapper.appendChild(e);
+            })
+            showNum = show.innerHTML;
+        }
+
+        function resetGame(el) {
+            if(el.target.className !== 'reset show') return;
+            gameStatus(false);
+            cardsNum = 3;
+            show.innerHTML = cardsNum;
+            cardWrapper.innerHTML = `${cardWrapperFixed}`;
+        }
+
+        function gameStatus(status) {
+            status === true ? setTimeout(e => startBtn.style.display = 'none', 1000)  : startBtn.style.display = 'block';
+            status === true ? setTimeout(e => resetBtn.classList.add('show'), 1000) : resetBtn.classList.remove('show');
+            status === true ? startBackground.classList.add('bg-active') : startBackground.classList.remove('bg-active');
+            status === true ? controlWrapper.style.pointerEvents = 'none' : controlWrapper.style.pointerEvents = 'auto';
+            status === true ? controlWrapper.querySelector('span').classList.add('active') : controlWrapper.querySelector('span').classList.remove('active');
+            status === true ? controlWrapper.querySelector('.subtract').classList.add('active') : controlWrapper.querySelector('.subtract').classList.remove('active');
+            status === true ? controlWrapper.querySelector('.increase').classList.add('active') : controlWrapper.querySelector('.increase').classList.remove('active');
+        }
+
+        function setCard(el) {
+            // startBtn 狀態
+            if(startBtn.style.display !== 'none') {
+                alert('Click Start button to start the game !')
+                return;
+            };
+
+            const targetCard = el.target.closest('.card');
+            const checkActive = document.querySelector('.card-check-bg');
+            // click card or span in the card
+            // 正確的卡，再次點擊無效果
+            if(el.target.className != 'card' &&
+             !el.target.className.includes('card-span') ||
+              targetCard.className.includes('active')
+              ) return;
+            
+            targetCard.querySelector('span').classList.remove('notSee');
+            
+            // 點下後只有一個激活
+            if(activeCardNum === 0 ) {
+                activeCardNum++;
+                activeCard = el.target.closest('.card');
+                return;
+            }  
+            // 點到自身
+            if(activeCard.querySelector('span') === targetCard.querySelector('span'))return;
+
+            // 判斷是否相同
+            cardJudgment(checkActive, targetCard)
+            
+            // 是否全對
+            if(showNum === 0) {
+                setTimeout(e => alert('Win! Win! You Got It!!!'), 1000); 
+            }
+           
+        }
+        
+        function cardJudgment(checkActive, targetCard){
+            cardWrapper.style.pointerEvents = 'none';
+            checkActive.classList.add('check-bg-active');
+            setTimeout(e => {
+                checkActive.classList.remove('check-bg-active');
+                cardWrapper.style.pointerEvents = 'auto';
+            }, 1000);
+            // 錯誤時
+            if(targetCard.querySelector('span').innerHTML !== activeCard.querySelector('span').innerHTML) {
+                activeCard.querySelector('span').classList.add('notSee');
+                targetCard.querySelector('span').classList.add('notSee');
+                activeCard.querySelector('span').classList.add('wrong-card');
+                targetCard.querySelector('span').classList.add('wrong-card'); 
+
+                setTimeout(e => {
+                    activeCard.querySelector('span').classList.remove('wrong-card');
+                    activeCard = 0;
+                    activeCardNum = 0;
+                }
+                ,800)
+                setTimeout(e => {
+                    targetCard.querySelector('span').classList.remove('wrong-card');
+                }
+                ,800)
+                return;
+            };
+            // 正確時 兩張都處在激活狀態
+            targetCard.classList.add('active');
+            activeCard.classList.add('active');
+            activeCardNum = 0;
+            activeCard = 0;
+            showNum--;
+        }
+
+        // event
+        controlWrapper.addEventListener('click', function(e) {
+            addCard(e);
+            removeCard(e);
+            gameActive(e);
+            resetGame(e);
+        })
+        cardWrapper.addEventListener('click', function(e) {
+            setCard(e);
+        })
+    </script>
+</body>
+</html>

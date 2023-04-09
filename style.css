@@ -1,0 +1,152 @@
+body{
+    box-sizing: border-box;
+    padding-top: 40px;
+}
+.card-check-bg{
+    position: fixed;
+    z-index: -1;
+    top: -40px;
+    width: 100%;
+    height: calc(100vh + 40px);
+    background-color: #ccc;
+    opacity: 0;
+    transition: 1s;
+}
+.check-bg-active{
+    animation-name: bg-active;
+    animation-duration: 2s;
+    animation-timing-function: ease;
+}
+@keyframes bg-active{
+0%{
+    opacity: .1;
+    z-index: 1;
+}
+50%{
+    opacity: .5;
+    z-index: 1;
+}
+}
+
+.start-background{
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    color: #fff;
+    position: absolute;
+    top: -100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 60px;
+    font-weight: bold;
+}
+.bg-active{
+    animation-name:oxxo;
+    animation-duration:3s;
+    animation-timing-function: ease;
+}
+@keyframes oxxo{
+    30%{
+        top:0;
+    }
+    66%{
+        top:0;
+    }
+}
+.control-wrapper{
+    margin: 0 0 15px 10px;
+    display: flex;
+    align-items: baseline;
+}
+p {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    margin: 0 10px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 45px;
+}
+.active{
+    color: #bbb;
+}
+button:hover{
+    background-color: #ddd;
+}
+.start,
+.reset{
+    width: 150px;
+    display: block;
+}
+.control-wrapper .reset{
+    display: none;
+}
+.reset.show{
+    display: block;
+    color: #000;
+    pointer-events: auto;
+}
+.control-wrapper span{
+    font-size: 20px;
+    margin: 0 20px;
+}
+
+.cards-wrapper{
+    box-sizing: border-box;
+    border-top: 1px solid #ccc;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 1400px;
+}
+.cards {
+    display: flex;
+}
+.card{
+    width: 120px;
+    height: 200px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 15px 0 0 15px;
+    font-size: 40px;
+    cursor: pointer;
+    /* transition: 1s .8s; */
+}
+.notSee{
+    opacity: 0;
+}
+
+.wrong-card{
+    animation-name: wrong;
+    animation-duration: 1.5s;
+    animation-timing-function: ease;
+}
+
+@keyframes wrong{
+    0%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+    }
+}
+/* .bg-active{
+    animation-name:oxxo;
+    animation-duration:3s;
+    animation-timing-function: ease;
+}
+@keyframes oxxo{
+    30%{
+        top:0;
+    }
+    66%{
+        top:0;
+    }
+} */
